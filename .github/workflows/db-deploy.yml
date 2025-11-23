@@ -15,13 +15,28 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Deploy schema (001)
+      - name: Check if schema exists
+        id: check_schema
+        uses: azure/sql-action@v2.3
+        with:
+          connection-string: ${{ secrets.AZURE_SQL_CONNECTION_STRING_DEV }}
+          path: './sql/check_schema.sql'
+
+      - name: Deploy schema (001) on fresh DB only
+        if: steps.check_schema.outputs.run001 == 'true'
         uses: azure/sql-action@v2.3
         with:
           connection-string: ${{ secrets.AZURE_SQL_CONNECTION_STRING_DEV }}
           path: './sql/001_create_adventureworks_schema.sql'
 
-      - name: Seed data (002)
+      - name: Apply migrations (any 003+, safe)
+        uses: azure/sql-action@v2.3
+        with:
+          connection-string: ${{ secrets.AZURE_SQL_CONNECTION_STRING_DEV }}
+          path: './sql/003_safe_migrations.sql'
+
+      - name: Seed initial data (002) only if schema was created
+        if: steps.check_schema.outputs.run002 == 'true'
         uses: azure/sql-action@v2.3
         with:
           connection-string: ${{ secrets.AZURE_SQL_CONNECTION_STRING_DEV }}
