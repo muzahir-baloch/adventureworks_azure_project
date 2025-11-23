@@ -1,0 +1,19 @@
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - sql/*
+      - pipelines/*
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - checkout: self
+
+  - script: |
+      echo "CI pipeline for AdventureWorks Azure database"
+      echo "Later this will run 001 and 002 SQL scripts against Dev"
+    displayName: "Verify pipeline runs"
