@@ -15,8 +15,14 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Deploy SQL scripts to Dev
+      - name: Deploy schema (001)
         uses: azure/sql-action@v2.3
         with:
           connection-string: ${{ secrets.AZURE_SQL_CONNECTION_STRING_DEV }}
-          path: './sql/*.sql'
+          path: './sql/001_create_adventureworks_schema.sql'
+
+      - name: Seed data (002)
+        uses: azure/sql-action@v2.3
+        with:
+          connection-string: ${{ secrets.AZURE_SQL_CONNECTION_STRING_DEV }}
+          path: './sql/002_seed_sample_data.sql'
