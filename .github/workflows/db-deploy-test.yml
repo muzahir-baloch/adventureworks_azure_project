@@ -1,0 +1,19 @@
+name: DB Deploy Test
+
+on:
+  workflow_dispatch:   # manual trigger from Actions tab
+
+jobs:
+  deploy-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # Only safe, non destructive migrations on Test
+      - name: Apply migration 003 to Test
+        uses: azure/sql-action@v2.3
+        with:
+          connection-string: ${{ secrets.AZURE_SQL_CONNECTION_STRING_TEST }}
+          path: './sql/003_add_status_column.sql'
